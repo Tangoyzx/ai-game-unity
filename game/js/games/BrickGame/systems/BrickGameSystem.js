@@ -6,7 +6,7 @@
  * 2. 每帧检测小球是否嵌入砖块，若嵌入则推出
  * 3. 检测胜利条件（所有可破坏砖块被消灭）
  */
-const System = require('../../framework/core/System');
+const System = require('../../../framework/core/System');
 
 class BrickGameSystem extends System {
   static ID = 'BrickGameSystem';

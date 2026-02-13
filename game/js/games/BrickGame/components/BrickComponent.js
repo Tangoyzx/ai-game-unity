@@ -4,7 +4,7 @@
  * 存储砖块的耐久度和是否可破坏。
  * 提供 Hit() 方法供 BrickGameSystem 调用，自动更新颜色和销毁。
  */
-const Component = require('../../framework/core/Component');
+const Component = require('../../../framework/core/Component');
 
 class BrickComponent extends Component {
   static ID = 'BrickComponent';

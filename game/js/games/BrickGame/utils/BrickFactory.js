@@ -4,22 +4,22 @@
  * 提供 createBall 和 createBrick 两个工厂函数，
  * 封装小球和砖块的 Entity + Component 组合创建逻辑，便于复用。
  */
-const SpriteRenderer = require('../../framework/components/SpriteRenderer');
-const RigidBody = require('../../framework/components/RigidBody');
-const CircleCollider = require('../../framework/components/CircleCollider');
-const BoxCollider = require('../../framework/components/BoxCollider');
-const BrickComponent = require('./BrickComponent');
+const SpriteRenderer = require('../../../framework/components/SpriteRenderer');
+const RigidBody = require('../../../framework/components/RigidBody');
+const CircleCollider = require('../../../framework/components/CircleCollider');
+const BoxCollider = require('../../../framework/components/BoxCollider');
+const BrickComponent = require('../components/BrickComponent');
 
 /**
  * 创建小球 Entity
  * 
  * 组件组合: Transform + SpriteRenderer(circle) + CircleCollider + RigidBody
  * 
- * @param {import('../../framework/core/World')} world - 游戏世界
+ * @param {import('../../../framework/core/World')} world - 游戏世界
  * @param {number} x - 初始位置 X
  * @param {number} y - 初始位置 Y
  * @param {number} [speed=200] - 小球速度（像素/秒）
- * @returns {import('../../framework/core/Entity')} 创建的小球 Entity
+ * @returns {import('../../../framework/core/Entity')} 创建的小球 Entity
  */
 function createBall(world, x, y, speed) {
   speed = speed || 200;
@@ -56,14 +56,14 @@ function createBall(world, x, y, speed) {
  * 组件组合: Transform + SpriteRenderer(rect) + BoxCollider + BrickComponent
  * 不添加 RigidBody，作为静态碰撞体参与碰撞检测。
  * 
- * @param {import('../../framework/core/World')} world - 游戏世界
+ * @param {import('../../../framework/core/World')} world - 游戏世界
  * @param {number} x - 砖块中心 X
  * @param {number} y - 砖块中心 Y
  * @param {object} [options]
  * @param {boolean} [options.destructible=true] - 是否可破坏
  * @param {number} [options.hp=20] - 耐久度（仅可破坏砖块有效）
  * @param {string} [options.color='#00cc44'] - 初始颜色
- * @returns {import('../../framework/core/Entity')} 创建的砖块 Entity
+ * @returns {import('../../../framework/core/Entity')} 创建的砖块 Entity
  */
 function createBrick(world, x, y, options) {
   const opts = options || {};

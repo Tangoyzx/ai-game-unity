@@ -7,6 +7,7 @@
 const fw = require('./framework/index');
 const Looper = require('./looper');
 const BrickGame = require('./games/BrickGame/BrickGame');
+const CharacterSystem = require('./games/BrickGame/systems/CharacterSystem');
 
 module.exports = function main() {
   // ---- 1. 获取画布 ----
@@ -23,9 +24,14 @@ module.exports = function main() {
   // ---- 4. 启动打砖块游戏（内部注册 BrickGameSystem，需在 RenderSystem 之前）----
   BrickGame.Start(world);
 
-  world.AddSystem(new fw.RenderSystem());         // 渲染（最后）
+  world.AddSystem(new fw.RenderSystem());         // 渲染
 
-  // ---- 5. 启动主循环 ----
+  // ---- 5. 注册角色系统（在 RenderSystem 之后，叠加绘制影子和角色预览）----
+  const characterSystem = new CharacterSystem();
+  world.AddSystem(characterSystem);
+  BrickGame.InitCharacters(world, characterSystem);
+
+  // ---- 6. 启动主循环 ----
   const looper = new Looper(world);
   looper.Start();
 

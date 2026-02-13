@@ -10,8 +10,8 @@
  *   const BrickGame = require('./games/BrickGame/BrickGame');
  *   BrickGame.Start(world);
  */
-const BrickGameSystem = require('./BrickGameSystem');
-const { createBall, createBrick } = require('./BrickFactory');
+const BrickGameSystem = require('./systems/BrickGameSystem');
+const { createBall, createBrick } = require('./utils/BrickFactory');
 
 /** 网格常量 */
 const CELL_SIZE = 32;       // 每个网格单元的像素大小
@@ -20,9 +20,16 @@ const GRID_ROWS = 15;       // 网格行数
 const FIELD_WIDTH = GRID_COLS * CELL_SIZE;   // 场地宽度 320px
 const FIELD_HEIGHT = GRID_ROWS * CELL_SIZE;  // 场地高度 480px
 
+/** 刷新区常量 */
+const SPAWN_AREA_HEIGHT = 80;  // 刷新区高度（像素）
+
 /** 砖块配置 */
 const BRICK_HP = 20;        // 可破坏砖块的耐久度
 const BALL_SPEED = 200;     // 小球速度（像素/秒）
+
+/** 场地原点（由 Start 计算，供外部使用） */
+let _originX = 0;
+let _originY = 0;
 
 /**
  * 启动打砖块游戏
@@ -33,9 +40,11 @@ function Start(world) {
   // ---- 1. 注册游戏系统（在 PhysicsSystem 之后、RenderSystem 之前）----
   world.AddSystem(new BrickGameSystem());
 
-  // ---- 2. 计算场地原点（居中） ----
+  // ---- 2. 计算场地原点（上移，为底部刷新区腾出空间） ----
   const originX = (world.width - FIELD_WIDTH) / 2;
-  const originY = (world.height - FIELD_HEIGHT) / 2;
+  const originY = (world.height - FIELD_HEIGHT - SPAWN_AREA_HEIGHT) / 2;
+  _originX = originX;
+  _originY = originY;
 
   // ---- 3. 遍历网格，创建砖块 ----
   for (let row = 0; row < GRID_ROWS; row++) {
@@ -76,14 +85,44 @@ function Start(world) {
     '原点:', originX, originY);
 }
 
+/**
+ * 初始化角色系统
+ * 在 CharacterSystem 注册到 World 之后调用。
+ * 
+ * @param {import('../../framework/core/World')} world - 游戏世界
+ * @param {import('./CharacterSystem')} characterSystem - 已注册的角色系统实例
+ */
+function InitCharacters(world, characterSystem) {
+  characterSystem.Init({
+    originX: _originX,
+    originY: _originY,
+    gridCols: GRID_COLS,
+    gridRows: GRID_ROWS,
+    fieldWidth: FIELD_WIDTH,
+    fieldHeight: FIELD_HEIGHT,
+    spawnAreaHeight: SPAWN_AREA_HEIGHT
+  });
+
+  // 生成初始 3 个角色
+  characterSystem.SpawnCharacters();
+
+  console.log('[BrickGame] 角色系统初始化完成',
+    '刷新区高度:', SPAWN_AREA_HEIGHT);
+}
+
 module.exports = {
   Start,
+  InitCharacters,
   // 导出常量供外部参考
   CELL_SIZE,
   GRID_COLS,
   GRID_ROWS,
   FIELD_WIDTH,
   FIELD_HEIGHT,
+  SPAWN_AREA_HEIGHT,
   BRICK_HP,
-  BALL_SPEED
+  BALL_SPEED,
+  // 导出场地原点访问器
+  get originX() { return _originX; },
+  get originY() { return _originY; }
 };
