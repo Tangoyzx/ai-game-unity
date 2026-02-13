@@ -52,8 +52,8 @@ function Start(world) {
     bottom: sysInfo.windowHeight || world.height
   };
 
-  // ---- 3. 计算场地原点（主界面右对齐，保留20px右边距） ----
-  const RIGHT_MARGIN = 20;
+  // ---- 3. 计算场地原点（主界面右对齐，保留5px右边距） ----
+  const RIGHT_MARGIN = 5;
   const originX = _safeArea.right - FIELD_WIDTH - RIGHT_MARGIN;
   const originY = (world.height - FIELD_HEIGHT - SPAWN_AREA_HEIGHT) / 2;
   _originX = originX;

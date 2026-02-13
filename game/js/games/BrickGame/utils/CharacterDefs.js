@@ -17,25 +17,29 @@ const CHARACTER_TYPES = {
   /** 1x1 方块 */
   'block_1x1': {
     cells: [{ r: 0, c: 0 }],
-    color: '#6699ff'
+    color: '#6699ff',
+    attack: 15
   },
 
   /** 1x2 横条 */
   'block_1x2': {
     cells: [{ r: 0, c: 0 }, { r: 0, c: 1 }],
-    color: '#ff9933'
+    color: '#ff9933',
+    attack: 20
   },
 
   /** 2x1 竖条 */
   'block_2x1': {
     cells: [{ r: 0, c: 0 }, { r: 1, c: 0 }],
-    color: '#33cc99'
+    color: '#33cc99',
+    attack: 18
   },
 
   /** 2x2 缺右上角（L 形） */
   'block_2x2_L': {
     cells: [{ r: 0, c: 0 }, { r: 1, c: 0 }, { r: 1, c: 1 }],
-    color: '#cc66ff'
+    color: '#cc66ff',
+    attack: 25
   }
 };
 

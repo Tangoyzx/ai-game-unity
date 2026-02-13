@@ -198,6 +198,20 @@ class World {
     }
   }
 
+  /**
+   * 按 ID 获取已注册的 System
+   * @param {string} systemId - System 的静态 ID
+   * @returns {import('./System')|null}
+   */
+  GetSystem(systemId) {
+    for (let i = 0; i < this._systems.length; i++) {
+      if (this._systems[i].constructor.ID === systemId) {
+        return this._systems[i];
+      }
+    }
+    return null;
+  }
+
   // ---- 查询 ----
 
   /**

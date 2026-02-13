@@ -140,7 +140,8 @@ class CharacterSystem extends System {
       typeId: typeId,
       cells: typeDef.cells,
       color: typeDef.color,
-      slotIndex: slotIndex
+      slotIndex: slotIndex,
+      attack: typeDef.attack
     });
     entity.AddComponent(charComp);
 

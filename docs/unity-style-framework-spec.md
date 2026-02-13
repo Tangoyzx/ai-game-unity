@@ -913,3 +913,9 @@ world.AddSystem(new RenderSystem());         // 5. 渲染（最后）
 10. **触摸区域检测优先级**：InputSystem 做命中检测时，优先使用 Collider 范围，其次使用 Renderer 尺寸。后创建的 Entity（视觉上更"上层"的）优先命中。
 11. **拖动与点击互斥**：同一次触摸只能触发点击或拖动其中之一。移动距离 ≥ `dragThreshold` 进入拖动状态后，不再触发 onClick。
 12. **多点触控**：初始版本可只支持单点触控（取第一个触摸点），后续按需扩展。
+13. **微信小游戏平台兼容性**：
+    - **Canvas 事件监听**：微信小游戏的 `wx.createCanvas()` 返回的 canvas 对象不支持标准的 `addEventListener` 方法
+    - **触摸事件处理**：必须使用微信全局 API（`wx.onTouchStart`、`wx.onTouchMove`、`wx.onTouchEnd`）而非 canvas.addEventListener
+    - **事件对象结构**：微信小游戏的触摸事件对象结构与标准一致，包含 `touches` 数组和 `clientX/clientY` 坐标
+    - **注意事项**：在 main.js 或游戏入口中监听全局触摸事件时，必须使用 `wx.onXXX` API，而不是在 canvas 对象上注册监听器
+    - **上传配置一致性**：`tools/upload.js` 中的编译设置（`minify`、`es6`、`es7` 等）必须与 `project.config.json` 保持一致，避免"真机调试正常但上传后报错"的问题。建议关闭代码压缩（`minify: false`），因为压缩可能破坏微信API的调用

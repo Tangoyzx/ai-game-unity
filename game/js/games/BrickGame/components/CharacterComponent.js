@@ -26,6 +26,7 @@ class CharacterComponent extends Component {
    * @param {string} [options.color='#ffffff'] - 填充色
    * @param {string} [options.borderColor='#333333'] - 边框色
    * @param {number} [options.slotIndex=-1] - 刷新区槽位索引
+   * @param {number} [options.attack=10] - 攻击力
    */
   constructor(options) {
     super();
@@ -44,6 +45,10 @@ class CharacterComponent extends Component {
     this.prevGridPos = null;
     /** @type {'spawn'|'placed'} 拖拽开始前的状态，用于放置失败时回退 */
     this._dragOrigin = 'spawn';
+
+    // ---- 战斗属性 ----
+    /** @type {number} 攻击力 */
+    this.attack = opts.attack !== undefined ? opts.attack : 10;
 
     // ---- 视觉属性 ----
     /** @type {Array<{r:number, c:number}>} 单元偏移数组 */
@@ -105,7 +110,7 @@ class CharacterComponent extends Component {
   /**
    * 碰撞回调虚方法
    * 当小球碰撞角色的幻影砖块时由 CharacterSystem 调用。
-   * 基类默认空实现（不可破坏，无效果）。
+   * 基类实现：向最前方的怪物发射子弹。
    * 子类可重写此方法实现不同碰撞行为。
    * 
    * @param {import('../../../framework/core/Entity')} ball - 碰撞的小球实体
@@ -113,7 +118,66 @@ class CharacterComponent extends Component {
    * @param {{x: number, y: number}} normal - 碰撞法线
    */
   onHit(ball, hitBrick, normal) {
-    // 基类默认：不做任何事（不可破坏）
+    // 只有在 placed 状态才能发射子弹
+    if (this.state !== 'placed') return;
+    
+    // 查找最前方的怪物
+    const targetMonster = this._findFrontmostMonster();
+    if (!targetMonster) {
+      return; // 没有怪物，不发射
+    }
+    
+    // 发射子弹
+    this._shootBullet(hitBrick);
+  }
+
+  /**
+   * 查找路径最前方的怪物（pathProgress 最大）
+   * @returns {import('../../../framework/core/Entity')|null}
+   * @private
+   */
+  _findFrontmostMonster() {
+    if (!this.entity || !this.entity.world) return null;
+    
+    const monsters = this.entity.world.Query('MonsterComponent');
+    if (monsters.length === 0) return null;
+    
+    let frontmost = null;
+    let maxProgress = -1;
+    
+    for (let i = 0; i < monsters.length; i++) {
+      const monster = monsters[i];
+      if (!monster.active) continue;
+      
+      const monsterComp = monster.GetComponent('MonsterComponent');
+      if (!monsterComp || monsterComp.state === 'dead') continue;
+      
+      if (monsterComp.pathProgress > maxProgress) {
+        maxProgress = monsterComp.pathProgress;
+        frontmost = monster;
+      }
+    }
+    
+    return frontmost;
+  }
+
+  /**
+   * 发射子弹
+   * @param {import('../../../framework/core/Entity')} fromBrick - 发射源砖块
+   * @private
+   */
+  _shootBullet(fromBrick) {
+    if (!this.entity || !this.entity.world) return;
+    
+    const transform = fromBrick.GetComponent('Transform');
+    if (!transform) return;
+    
+    // 通过全局事件总线发出发射子弹事件
+    this.entity.world.eventBus.Emit('shoot_bullet', {
+      x: transform.x,
+      y: transform.y,
+      damage: this.attack
+    });
   }
 }
 
