@@ -31,6 +31,9 @@ const BALL_SPEED = 200;     // 小球速度（像素/秒）
 let _originX = 0;
 let _originY = 0;
 
+/** 安全区信息（由 Start 获取，供 InitCharacters 使用） */
+let _safeArea = null;
+
 /**
  * 启动打砖块游戏
  * 
@@ -40,13 +43,23 @@ function Start(world) {
   // ---- 1. 注册游戏系统（在 PhysicsSystem 之后、RenderSystem 之前）----
   world.AddSystem(new BrickGameSystem());
 
-  // ---- 2. 计算场地原点（上移，为底部刷新区腾出空间） ----
-  const originX = (world.width - FIELD_WIDTH) / 2;
+  // ---- 2. 获取安全区信息 ----
+  const sysInfo = wx.getSystemInfoSync();
+  _safeArea = sysInfo.safeArea || {
+    left: 0,
+    right: sysInfo.windowWidth || world.width,
+    top: 0,
+    bottom: sysInfo.windowHeight || world.height
+  };
+
+  // ---- 3. 计算场地原点（主界面右对齐，保留20px右边距） ----
+  const RIGHT_MARGIN = 20;
+  const originX = _safeArea.right - FIELD_WIDTH - RIGHT_MARGIN;
   const originY = (world.height - FIELD_HEIGHT - SPAWN_AREA_HEIGHT) / 2;
   _originX = originX;
   _originY = originY;
 
-  // ---- 3. 遍历网格，创建砖块 ----
+  // ---- 4. 遍历网格，创建砖块 ----
   for (let row = 0; row < GRID_ROWS; row++) {
     for (let col = 0; col < GRID_COLS; col++) {
       const ring = Math.min(row, GRID_ROWS - 1 - row, col, GRID_COLS - 1 - col);
@@ -75,7 +88,7 @@ function Start(world) {
     }
   }
 
-  // ---- 4. 在场地正中心创建小球 ----
+  // ---- 5. 在场地正中心创建小球 ----
   const ballX = originX + FIELD_WIDTH / 2;
   const ballY = originY + FIELD_HEIGHT / 2;
   createBall(world, ballX, ballY, BALL_SPEED);
@@ -100,7 +113,10 @@ function InitCharacters(world, characterSystem) {
     gridRows: GRID_ROWS,
     fieldWidth: FIELD_WIDTH,
     fieldHeight: FIELD_HEIGHT,
-    spawnAreaHeight: SPAWN_AREA_HEIGHT
+    spawnAreaHeight: SPAWN_AREA_HEIGHT,
+    // 传递安全区信息，用于刷新区布局
+    safeAreaBottom: _safeArea.bottom,
+    screenWidth: world.width
   });
 
   // 生成初始 3 个角色

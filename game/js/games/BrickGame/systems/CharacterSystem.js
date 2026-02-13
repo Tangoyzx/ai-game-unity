@@ -43,6 +43,10 @@ class CharacterSystem extends System {
     this._fieldHeight = 480;
     /** @type {number} 刷新区高度 */
     this._spawnAreaHeight = 80;
+    /** @type {number} 安全区底部位置 */
+    this._safeAreaBottom = 0;
+    /** @type {number} 屏幕宽度 */
+    this._screenWidth = 0;
 
     // ---- 角色管理 ----
     /** @type {(import('../../../framework/core/Entity')|null)[]} 3 个刷新槽位对应的角色实体 */
@@ -69,6 +73,8 @@ class CharacterSystem extends System {
    * @param {number} layout.fieldWidth
    * @param {number} layout.fieldHeight
    * @param {number} layout.spawnAreaHeight
+   * @param {number} layout.safeAreaBottom
+   * @param {number} layout.screenWidth
    */
   Init(layout) {
     this._originX = layout.originX;
@@ -78,6 +84,8 @@ class CharacterSystem extends System {
     this._fieldWidth = layout.fieldWidth;
     this._fieldHeight = layout.fieldHeight;
     this._spawnAreaHeight = layout.spawnAreaHeight;
+    this._safeAreaBottom = layout.safeAreaBottom;
+    this._screenWidth = layout.screenWidth;
   }
 
   OnInit() {
@@ -176,15 +184,19 @@ class CharacterSystem extends System {
 
   /**
    * 计算刷新区槽位中心坐标
+   * 刷新区独立于主界面，贴在屏幕底部
    * @param {number} slotIndex 0/1/2
    * @returns {{x: number, y: number}}
    * @private
    */
   _getSlotCenter(slotIndex) {
+    const BOTTOM_MARGIN = 10;
     const slotWidth = this._fieldWidth / 3;
+    // 刷新区水平居中
+    const spawnAreaX = (this._screenWidth - this._fieldWidth) / 2;
     return {
-      x: this._originX + (slotIndex + 0.5) * slotWidth,
-      y: this._originY + this._fieldHeight + this._spawnAreaHeight / 2
+      x: spawnAreaX + (slotIndex + 0.5) * slotWidth,
+      y: this._safeAreaBottom - this._spawnAreaHeight / 2 - BOTTOM_MARGIN
     };
   }
 
@@ -592,12 +604,16 @@ class CharacterSystem extends System {
 
   /**
    * 绘制刷新区背景
+   * 刷新区独立于主界面，贴在屏幕底部
    * @param {CanvasRenderingContext2D} ctx
    * @private
    */
   _drawSpawnArea(ctx) {
-    const x = this._originX;
-    const y = this._originY + this._fieldHeight;
+    const BOTTOM_MARGIN = 10;
+    // 刷新区水平居中
+    const x = (this._screenWidth - this._fieldWidth) / 2;
+    // 刷新区贴底部
+    const y = this._safeAreaBottom - this._spawnAreaHeight - BOTTOM_MARGIN;
     ctx.save();
     ctx.fillStyle = 'rgba(40, 40, 40, 0.6)';
     ctx.fillRect(x, y, this._fieldWidth, this._spawnAreaHeight);

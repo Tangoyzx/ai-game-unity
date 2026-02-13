@@ -68,9 +68,8 @@ def main():
     # 创建LatestChange.md文件路径
     latest_change_file = os.path.join(project_root, "LatestChange.md")
     
-    # 使用gemini-internal生成总结（这里需要根据实际gemini-internal命令调整）
-    # 假设gemini-internal命令格式为: gemini-internal "总结现有本地修改，长度在三十字以内"
-    summary_command = 'gemini-internal "总结现有本地修改，长度在三十字以内，放到LatestChange.md中"'
+    # 使用gemini-interval生成总结
+    summary_command = 'gemini-interval -p "总结现有本地修改，长度在三十字以内，放到LatestChange.md中"'
     
     # 使用登录shell来确保nvm环境被加载（gemini-internal安装在nvm的node环境中）
     if run_command(summary_command, "生成修改总结", use_login_shell=True):
