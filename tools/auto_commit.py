@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 """
-自动化提交脚本：总结本地修改、提交并推送到远端
+自动化提交脚本：提交并推送到远端
 """
 
 import subprocess
 import os
 import sys
+from datetime import datetime
 
 def run_command(command, description="", use_login_shell=False):
     """执行shell命令并返回结果
@@ -62,46 +63,18 @@ def main():
     print("检测到以下修改:")
     print(git_status)
     
-    # 2. 调用gemini-internal总结本地修改
-    print("\n正在调用gemini-internal总结本地修改...")
+    # 2. 生成时间戳作为提交信息
+    commit_message = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    print(f"提交信息: {commit_message}")
     
-    # 创建LatestChange.md文件路径
-    latest_change_file = os.path.join(project_root, "LatestChange.md")
-    
-    # 使用gemini-interval生成总结
-    summary_command = 'gemini-interval -p "总结现有本地修改，长度在三十字以内，放到LatestChange.md中"'
-    
-    # 先尝试直接调用
-    if run_command(summary_command, "生成修改总结", use_login_shell=False):
-        print("修改总结生成成功")
-    else:
-        print("警告: gemini-interval调用失败，使用默认提交信息")
-        # 创建默认的提交信息
-        with open(latest_change_file, 'w', encoding='utf-8') as f:
-            f.write("自动提交: 本地修改更新")
-    
-    # 3. 读取LatestChange.md内容作为提交信息
-    try:
-        with open(latest_change_file, 'r', encoding='utf-8') as f:
-            commit_message = f.read().strip()
-        
-        if not commit_message:
-            commit_message = "自动提交: 本地修改更新"
-            
-        print(f"提交信息: {commit_message}")
-        
-    except FileNotFoundError:
-        print("警告: LatestChange.md文件未找到，使用默认提交信息")
-        commit_message = "自动提交: 本地修改更新"
-    
-    # 4. 添加所有本地改动
+    # 3. 添加所有本地改动
     if run_command("git add .", "添加所有本地改动"):
         print("所有文件已添加到暂存区")
     else:
         print("添加文件失败")
         return
     
-    # 5. 提交到本地
+    # 4. 提交到本地
     commit_command = f'git commit -m "{commit_message}"'
     if run_command(commit_command, "提交到本地仓库"):
         print("提交成功")
@@ -109,7 +82,7 @@ def main():
         print("提交失败")
         return
     
-    # 6. 推送到远端
+    # 5. 推送到远端
     if run_command("git push", "推送到远端仓库"):
         print("推送成功")
     else:
