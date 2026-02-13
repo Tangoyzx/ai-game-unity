@@ -1,0 +1,85 @@
+# AI Game Unity 项目 Git 忽略文件
+
+# ==================== 工具相关 ====================
+# 忽略 tools 目录下的 node_modules 和私钥文件
+tools/node_modules/
+tools/private.key
+
+# ==================== 微信小游戏 ====================
+# 微信开发者工具生成的文件
+.project
+*.wxss
+*.wxml
+*.wxs
+
+# 编译产物
+dist/
+build/
+miniprogram_npm/
+
+# ==================== Node.js ====================
+# 依赖目录
+node_modules/
+
+# 日志文件
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# 运行时数据
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# 覆盖率目录
+coverage/
+*.lcov
+
+# nyc 测试覆盖率文件
+.nyc_output
+
+# ==================== IDE ====================
+# IDE 配置文件
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ==================== 操作系统 ====================
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Linux
+*~
+
+# ==================== 临时文件 ====================
+# 临时文件
+*.tmp
+*.temp
+
+# 缓存文件
+.cache/
+
+# ==================== 上传和预览文件 ====================
+# 上传工具生成的预览二维码
+tools/preview-qrcode.jpg
+
+# ==================== 其他 ====================
+# 环境变量文件
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# 包锁文件（根据项目需要选择是否忽略）
+# package-lock.json
+# yarn.lock

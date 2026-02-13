@@ -1,0 +1,20 @@
+{
+  "name": "ai-game-unity-tools",
+  "version": "1.0.0",
+  "description": "AI Game Unity 微信小游戏上传工具",
+  "main": "upload.js",
+  "scripts": {
+    "upload": "node upload.js",
+    "preview": "node upload.js --preview",
+    "help": "echo '可用命令: npm run upload (上传代码) | npm run preview (生成预览二维码)'"
+  },
+  "keywords": ["wechat", "minigame", "upload", "ci"],
+  "author": "AI Game Unity Team",
+  "license": "MIT",
+  "dependencies": {
+    "miniprogram-ci": "^1.9.0"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}
