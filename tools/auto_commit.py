@@ -71,11 +71,11 @@ def main():
     # 使用gemini-interval生成总结
     summary_command = 'gemini-interval -p "总结现有本地修改，长度在三十字以内，放到LatestChange.md中"'
     
-    # 使用登录shell来确保nvm环境被加载（gemini-internal安装在nvm的node环境中）
-    if run_command(summary_command, "生成修改总结", use_login_shell=True):
+    # 先尝试直接调用
+    if run_command(summary_command, "生成修改总结", use_login_shell=False):
         print("修改总结生成成功")
     else:
-        print("警告: gemini-internal调用失败，使用默认提交信息")
+        print("警告: gemini-interval调用失败，使用默认提交信息")
         # 创建默认的提交信息
         with open(latest_change_file, 'w', encoding='utf-8') as f:
             f.write("自动提交: 本地修改更新")
